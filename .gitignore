@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.py[cod]
+
+# Next.js
+web/.next/
+web/out/
+
+# Build output
+build/
+
+# Uploaded files
+backend/uploads/
+
+# Environment variables / secrets
+.env*
+backend/.env*
+web/.env*
+
+# Vercel
+.vercel/
+
+# Testing
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+web/next-env.d.ts
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Certificates
+*.pem

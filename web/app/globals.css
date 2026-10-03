@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens. These also generate utilities, e.g. bg-cm-paper,
+   text-cm-muted, border-cm-blue, font-mono.
+------------------------------------------------------------------- */
+@theme inline {
+  --color-cm-graphite: #151817;
+  --color-cm-paper: #f5f6f4;
+  --color-cm-muted: #6b716d;
+  --color-cm-blue: #2563eb;
+  --color-cm-blue-soft: #eff6ff;
+  --color-cm-mint: #10b981;
+  --color-cm-amber: #f59e0b;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", "JetBrains Mono",
+    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------- */
+@layer base {
+  body {
+    background: var(--color-cm-paper);
+    color: var(--color-cm-graphite);
+    font-family: var(--font-sans);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Keyframes
+------------------------------------------------------------------- */
+@keyframes cm-node {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes cm-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cm-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilities (same class names the components already use).
+   Reduced-motion handling lives inside each animated utility.
+------------------------------------------------------------------- */
+@utility cm-mono {
+  font-family: var(--font-mono);
+}
+
+/* Faint measurement grid that fades out downwards */
+@utility cm-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-cm-graphite) 5%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-cm-graphite) 5%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 32px 32px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+}
+
+@utility cm-node {
+  animation: cm-node 1.1s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Staggered entrance: set --d (e.g. style={{ "--d": "90ms" }}) */
+@utility cm-rise {
+  animation: cm-rise 0.38s ease-out both;
+  animation-delay: var(--d, 0ms);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility cm-fade {
+  animation: cm-fade 0.4s ease-out both;
+  animation-delay: var(--d, 0ms);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility cm-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--color-cm-blue);
+  line-height: 1;
+  vertical-align: baseline;
+  animation: cm-blink 1s steps(1) infinite;
+
+  &::after {
+    content: "\258C";
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
