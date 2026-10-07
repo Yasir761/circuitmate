@@ -1,5 +1,6 @@
-
 "use client";
+
+import { useRef } from "react";
 
 import "./globals.css";
 
@@ -11,7 +12,8 @@ import { StudyWorkspace } from "./components/study/StudyWorkspace";
 import { ErrorNotice } from "./components/ui/ErrorNotice";
 
 export default function Home() {
-  const app = useCircuitMate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const app = useCircuitMate(fileInputRef);
 
   return (
     <AppShell
@@ -26,7 +28,7 @@ export default function Home() {
       }
     >
       <input
-        ref={app.fileInputRef}
+        ref={fileInputRef}
         type="file"
         accept="application/pdf"
         className="hidden"

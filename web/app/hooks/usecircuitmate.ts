@@ -4,7 +4,6 @@ import {
   ChangeEvent,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from "react";
 
@@ -18,6 +17,8 @@ import {
 } from "../lib/api";
 
 import { SUBJECTS } from "../lib/constant";
+
+import type { RefObject } from "react";
 
 import type {
   ChatController,
@@ -74,7 +75,9 @@ function getInitialSessionId(): string {
  * All application state and API calls live here;
  * components only render.
  */
-export function useCircuitMate() {
+export function useCircuitMate(
+  fileInputRef: RefObject<HTMLInputElement | null>,
+) {
   /* document */
 
   const [material, setMaterial] =
@@ -89,8 +92,7 @@ export function useCircuitMate() {
   const [uploadError, setUploadError] =
     useState("");
 
-  const fileInputRef =
-    useRef<HTMLInputElement>(null);
+
 
   /* workspace */
 

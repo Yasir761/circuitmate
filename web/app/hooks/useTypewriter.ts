@@ -2,17 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Progressive reveal for responses that arrive complete. If true streaming is
- * added later, feed the streamed buffer in as `text` and set enabled=false
- * once the stream ends; consumers do not need to change.
- */
 export function useTypewriter(
   text: string,
   enabled: boolean,
   onDone?: () => void,
 ) {
-  const [count, setCount] = useState(enabled ? 0 : text.length);
+  const [progress, setProgress] = useState({
+    text: "",
+    count: 0,
+  });
+
   const onDoneRef = useRef(onDone);
 
   useEffect(() => {
@@ -20,31 +19,44 @@ export function useTypewriter(
   });
 
   useEffect(() => {
-    if (!enabled) {
-      setCount(text.length);
-      return;
-    }
+    if (!enabled) return;
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
     if (reduceMotion) {
-      setCount(text.length);
-      onDoneRef.current?.();
-      return;
+      const frame = requestAnimationFrame(() => {
+        setProgress({
+          text,
+          count: text.length,
+        });
+
+        onDoneRef.current?.();
+      });
+
+      return () => cancelAnimationFrame(frame);
     }
 
     const duration = Math.min(2600, Math.max(500, text.length * 6));
+
     let frame = 0;
     let start: number | null = null;
 
     const tick = (now: number) => {
       if (start === null) start = now;
-      const progress = Math.min(1, (now - start) / duration);
-      setCount(Math.ceil(progress * text.length));
 
-      if (progress < 1) {
+      const progressValue = Math.min(
+        1,
+        (now - start) / duration,
+      );
+
+      setProgress({
+        text,
+        count: Math.ceil(progressValue * text.length),
+      });
+
+      if (progressValue < 1) {
         frame = requestAnimationFrame(tick);
       } else {
         onDoneRef.current?.();
@@ -52,8 +64,14 @@ export function useTypewriter(
     };
 
     frame = requestAnimationFrame(tick);
+
     return () => cancelAnimationFrame(frame);
   }, [text, enabled]);
 
-  return { shown: text.slice(0, count), done: count >= text.length };
+  const count = progress.text === text ? progress.count : 0;
+
+  return {
+    shown: enabled ? text.slice(0, count) : text,
+    done: !enabled || count >= text.length,
+  };
 }
